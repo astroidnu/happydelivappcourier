@@ -26,7 +26,7 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No track id record"/>
+            android:text="@string/package_no_data"/>
         <Button
             android:id="@+id/btn_add_tracking"
             android:textColor="@color/colorWhite"
@@ -34,6 +34,6 @@
             android:layout_marginTop="32dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add track id"/>
+            android:text="Tambah kiriman"/>
     </LinearLayout>
 </RelativeLayout>

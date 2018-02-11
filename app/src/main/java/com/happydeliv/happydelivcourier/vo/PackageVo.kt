@@ -8,10 +8,10 @@ import com.google.gson.annotations.SerializedName
  * SCO Project
  */
 data class PackageVo(
-        @SerializedName("name") val name :String,
-        @SerializedName("resi_number") val resi_number :String,
-        @SerializedName("track_id") val track_id :String,
+        @SerializedName("recipient_name") val recipientName :String,
+        @SerializedName("track_id") val trackId :String,
+        @SerializedName("resi_number") val resiNumber :String,
         @SerializedName("status") val status :String,
-        @SerializedName("delivered_at") val deliveredAt :String,
-        @SerializedName("profile_photo") val photoProfile :String
+        @SerializedName("recipient_image") val recipientImage :String,
+        @SerializedName("delivered_at") val deliveredAt :String
 )

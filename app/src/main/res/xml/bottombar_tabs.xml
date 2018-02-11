@@ -3,7 +3,11 @@
     <tab
         id="@+id/navigation_item_home"
         icon="@drawable/ic_bottom_home"
-        title="Home" />
+        title="Kiriman" />
+    <tab
+        id="@+id/navigation_item_best_route"
+        icon="@drawable/ic_bottom_best_route"
+        title="Rute terbaik" />
     <tab
         id="@+id/navigation_item_history"
         icon="@drawable/ic_bottom_history"

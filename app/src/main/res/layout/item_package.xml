@@ -13,7 +13,7 @@
         <ImageView
             android:layout_gravity="center_vertical"
             android:padding="8dp"
-            android:id="@+id/iv_expedition_logo"
+            android:id="@+id/iv_recipient_logo"
             android:src="@drawable/ic_logo_jne"
             android:layout_width="80dp"
             android:layout_height="80dp"/>
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/tv_package_expedition_name"
+                android:id="@+id/tv_package_recipient_name"
                 android:textAllCaps="true"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif"

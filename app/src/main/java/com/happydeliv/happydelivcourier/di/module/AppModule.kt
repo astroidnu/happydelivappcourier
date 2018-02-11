@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.happydeliv.happydelivcourier.session.LoginSession
 import com.happydeliv.happydelivcourier.utils.AppSchedulerProvider
+import com.happydeliv.happydelivcourier.utils.FirebaseDB
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
@@ -35,8 +36,11 @@ class AppModule{
     @Provides
     fun provideLoginSession() =  LoginSession()
 
-
     @Singleton
     @Provides
     fun provideGson() =  Gson()
+
+    @Singleton
+    @Provides
+    fun provideFirebaseDB(context: Context) =  FirebaseDB(context)
 }

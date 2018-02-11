@@ -3,8 +3,11 @@ package com.scoproject.newsapp.ui.common
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LifecycleRegistry
+import android.hardware.TriggerEvent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import com.firebase.jobdispatcher.*
 import com.happydeliv.happydelivcourier.ui.common.navigationcontroller.ActivityNavigation
 import com.scoproject.weatherapp.ui.base.BaseView
 import dagger.android.AndroidInjection
@@ -25,6 +28,10 @@ abstract class BaseActivity : AppCompatActivity(),BaseView, LifecycleOwner{
 
     private val mLifecycleRegistry : LifecycleRegistry by lazy{
         LifecycleRegistry(this)
+    }
+
+    private val mFirebaseJobDispatcher by lazy {
+        FirebaseJobDispatcher(GooglePlayDriver(this))
     }
 
     /**
@@ -54,6 +61,31 @@ abstract class BaseActivity : AppCompatActivity(),BaseView, LifecycleOwner{
 
     override fun setPresenter(presenter: BasePresenter<*>) {
         this.presenter = presenter
+    }
+
+    /**
+     * Start Firebase Job Dispatcher
+     * @Param Class, Job Tag, Frequency, Tolerence
+     */
+
+    fun <T> startFirebaseJobDispatcher(tClass: Class<T>, jobTag: String, frequency: Int, tolerance: Int) {
+        val myJob = mFirebaseJobDispatcher.newJobBuilder()
+                .setService(tClass as Class<out JobService>)
+                .setTag(jobTag)
+                .setReplaceCurrent(true)
+                .setTrigger(Trigger.NOW)
+                .build()
+        mFirebaseJobDispatcher.mustSchedule(myJob)
+    }
+
+    /**
+     * Stop firebase job dispatcher
+     * @Param tag job
+     */
+
+    fun stopFirebaseJobDispatcher(tagName: String) {
+        Log.d(javaClass.name, "OnStopJob")
+        mFirebaseJobDispatcher.cancelAll()
     }
 
 

@@ -32,7 +32,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorBlack"
-                android:text="Masukkan Nomor resi yang hendak Anda lacak"/>
+                android:text="Masukkan Nomor resi perusahaanmu untuk menambah daftar kiriman"/>
             <android.support.design.widget.TextInputLayout
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:text="Submit"/>
+                android:text="Tambah Kiriman"/>
         </LinearLayout>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

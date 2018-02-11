@@ -3,8 +3,10 @@ package com.happydeliv.happydelivcourier.di.component
 import android.app.Application
 import com.happydeliv.happydelivcourier.HappyDelivCourier
 import com.happydeliv.happydelivcourier.di.module.AppModule
+import com.happydeliv.happydelivcourier.di.module.FirebaseJobDispatcherModule
 import com.happydeliv.happydelivcourier.di.module.NetworkModule
 import com.happydeliv.happydelivcourier.di.module.builder.CommonActivityBuilder
+import com.happydeliv.happydelivcourier.services.LocationUpdateService
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -20,7 +22,8 @@ import javax.inject.Singleton
     (AndroidInjectionModule::class),
     (AppModule::class),
     (CommonActivityBuilder::class),
-    (NetworkModule::class)])
+    (NetworkModule::class),
+    (FirebaseJobDispatcherModule::class)])
  interface  AppComponent{
 
     @Component.Builder
@@ -28,8 +31,10 @@ import javax.inject.Singleton
         @BindsInstance
         fun application(application: Application): Builder
         fun networkModule(networkModule: NetworkModule): Builder
+        fun firebaseModule(firebaseJobDispatcherModule: FirebaseJobDispatcherModule): Builder
         fun build(): AppComponent
     }
 
     fun inject(happyDelivCourier: HappyDelivCourier)
+    fun inject(locationUpdateService: LocationUpdateService)
 }

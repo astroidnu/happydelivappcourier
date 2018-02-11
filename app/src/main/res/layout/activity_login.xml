@@ -4,6 +4,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <ProgressBar
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/pb_login"/>
     <LinearLayout
         android:layout_margin="16dp"
         android:orientation="vertical"
@@ -64,7 +70,7 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Don't have an account? Sign up here"/>
+            android:text="Klik disini untuk membaca petunjuk Sign in untuk kurir"/>
     </LinearLayout>
 
 </RelativeLayout>

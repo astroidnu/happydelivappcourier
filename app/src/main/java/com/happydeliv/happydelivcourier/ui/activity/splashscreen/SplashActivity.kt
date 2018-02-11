@@ -19,7 +19,7 @@ class SplashActivity : BaseActivity(), SplashContract.View{
 
     private val mRunnable: Runnable = Runnable {
         if (!isFinishing) {
-//            mActivityNavigation.navigateToLoginPage()
+            mActivityNavigation.navigateToLoginPage()
         }
     }
 

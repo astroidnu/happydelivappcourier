@@ -2,6 +2,10 @@ package com.happydeliv.happydelivcourier.ui.common.navigationcontroller
 
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import com.happydeliv.happydelivcourier.ui.fragment.home.bestroute.BestRouteFragment
+import com.happydeliv.happydelivcourier.ui.fragment.home.history.HistoryFragment
+import com.happydeliv.happydelivcourier.ui.fragment.home.inprogress.InProgressFragment
+import com.happydeliv.happydelivcourier.ui.fragment.home.myaccount.MyAccountFragment
 import javax.inject.Inject
 
 /**
@@ -11,6 +15,48 @@ import javax.inject.Inject
  */
 class FragmentNavigation @Inject constructor(val activity: AppCompatActivity, val containerId: Int) {
     var mFragmentManager = activity.supportFragmentManager
+
+
+    /**
+     * Navigate To In Progress Page
+     * */
+
+    fun navigateToInProgressPage() {
+        val mInProgressFragment = InProgressFragment()
+
+        loadFragment(mInProgressFragment)
+    }
+
+
+    /**
+     * Navigate To History Page
+     * */
+
+    fun navigateToHistoryPage() {
+        val mHistoryFragment = HistoryFragment()
+        loadFragment(mHistoryFragment)
+    }
+
+
+
+    /**
+     * Navigate To History Page
+     * */
+
+    fun navigateToBestRoutePage() {
+        val mBestRouteFragment = BestRouteFragment()
+        loadFragment(mBestRouteFragment)
+    }
+
+
+    /**
+     * Navigate To My Account Page
+     * */
+
+    fun navigateToMyAccountPage() {
+        val mMyAccountFragment = MyAccountFragment()
+        loadFragment(mMyAccountFragment)
+    }
 
     /**
      * Load Fragment
