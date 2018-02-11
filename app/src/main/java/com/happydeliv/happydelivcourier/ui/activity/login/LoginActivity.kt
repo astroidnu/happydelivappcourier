@@ -1,6 +1,8 @@
 package com.happydeliv.happydelivcourier.ui.activity.login
 
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.Toast
 import com.happydeliv.happydelivcourier.R
@@ -30,6 +32,8 @@ class LoginActivity : BaseActivity(), LoginContract.View{
     override fun onActivityReady(savedInstanceState: Bundle?) {
         mLoginPresenter.attachView(this)
         mLoginPresenter.checkIsLogin()
+        tv_sign_up_here.text = Html.fromHtml("Klik <a href=\'http://happydeliv.com/login_guide\'>disini</a> untuk membaca petunjuk Sign in untuk kurir")
+        tv_sign_up_here.movementMethod = LinkMovementMethod.getInstance()
         setupUIListener()
     }
 
