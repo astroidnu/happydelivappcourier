@@ -41,8 +41,12 @@ class AddTrackingActivity : BaseActivity(), AddTrackingContract.View{
         }
     }
 
+    override fun onBackPressed() {
+        mActivityNavigation.navigateToHomePage()
+        super.onBackPressed()
+    }
     override fun navigateToHome() {
-        this.finish()
+       onBackPressed()
     }
 
     override fun showError(content: String) {
