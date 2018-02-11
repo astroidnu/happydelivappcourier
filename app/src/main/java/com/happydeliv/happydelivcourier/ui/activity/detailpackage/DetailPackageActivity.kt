@@ -180,6 +180,8 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
             markerOptions.title("Current Position")
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
             currLocationMarker = mMap!!.addMarker(markerOptions)
+            mDetailPackagePresenter.mDriverLat = mLastLocation.latitude.toString()
+            mDetailPackagePresenter.mDriverLong = mLastLocation.longitude.toString()
         }
 
         mLocationRequest = LocationRequest()
@@ -204,6 +206,8 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
             currLocationMarker!!.remove()
         }
         latLng = LatLng(location!!.latitude, location.longitude)
+        mDetailPackagePresenter.mDriverLat = location.latitude.toString()
+        mDetailPackagePresenter.mDriverLong = location.longitude.toString()
         var markerOptions = MarkerOptions()
         markerOptions.position(latLng!!)
         markerOptions.title("Current Position")

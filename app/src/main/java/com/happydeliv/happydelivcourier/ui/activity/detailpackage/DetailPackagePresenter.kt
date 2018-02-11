@@ -23,6 +23,8 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                                                  val loginSession: LoginSession,
                                                  val gson: Gson,
                                                  val firebaseDB: FirebaseDB) : BasePresenter<DetailPackageContract.View>(disposable,scheduler),DetailPackageContract.UserActionListener{
+    lateinit var mDriverLat : String
+    lateinit var mDriverLong : String
 
     override fun getPackageDetail(trackId : String) {
         view?.showLoading()
@@ -78,7 +80,8 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                             view?.hideLoading()
                             if(result.resultCode == 1){
                                 getPackageDetail(trackingID)
-                                val progressPackageVo = ProgressPackageVo(trackingID,"6.20","10")
+
+                                val progressPackageVo = ProgressPackageVo(trackingID,mDriverLat,mDriverLong)
                                 firebaseDB.setInProgressPackageData(progressPackageVo)
                                 view?.hideProcessPackageLayout()
                             }else{
