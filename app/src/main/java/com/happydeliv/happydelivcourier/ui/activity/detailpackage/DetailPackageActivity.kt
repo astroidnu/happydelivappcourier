@@ -2,8 +2,10 @@ package com.happydeliv.happydelivcourier.ui.activity.detailpackage
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.IntentSender
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -62,7 +64,7 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
             }
         }
         TedRx2Permission.with(this)
-                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION)
+                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE)
                 .request()
                 .subscribe({ tedPermissionResult ->
                     if (tedPermissionResult.isGranted) {
@@ -116,6 +118,7 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun setupContent(recipientAddress: String,
                               trackingId: String,
                               imageUrl: String,
@@ -127,6 +130,11 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         Glide.with(this)
                 .load(imageUrl)
                 .into(iv_detail_profile_photo)
+
+        btn_phone_customer.setOnClickListener {
+            val callIntent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneDriver))
+            startActivity(callIntent)
+        }
 
     }
 
