@@ -29,7 +29,7 @@ class FirebaseDB(context : Context){
         val mDatabaseReference = mFirebaseDatabase
                 .getReference(TABLE_PACKAGE_IN_PROGRESS)
         mDatabaseReference.keepSynced(true)
-        mDatabaseReference.child(mDatabaseReference.push().key).setValue(progressPackageVo)
+        mDatabaseReference.child(progressPackageVo.trackId).setValue(progressPackageVo)
     }
 
 

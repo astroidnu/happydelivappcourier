@@ -49,7 +49,7 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
     var latLng : LatLng? = null
     var currLocationMarker : Marker? = null
 
-    lateinit var mTrackId :String
+    var mTrackId :String? = null
 
     override fun onActivityReady(savedInstanceState: Bundle?) {
         mDetailPackagePresenter.attachView(this)
@@ -57,7 +57,9 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         val bundle = intent.extras
         if (bundle != null) {
             mTrackId = bundle.getString("data")
-            mDetailPackagePresenter.getPackageDetail(mTrackId)
+            mTrackId?.let {
+                mDetailPackagePresenter.getPackageDetail(it)
+            }
         }
         TedRx2Permission.with(this)
                 .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION)
@@ -106,11 +108,11 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         }
 
         btn_process_package.setOnClickListener {
-            mDetailPackagePresenter.processPackage(mTrackId)
+            mDetailPackagePresenter.processPackage(mTrackId!!)
         }
 
         btn_finish_package.setOnClickListener {
-            mDetailPackagePresenter.finishPackage(mTrackId)
+            mDetailPackagePresenter.finishPackage(mTrackId!!)
         }
     }
 
@@ -201,7 +203,7 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
 
     override fun onLocationChanged(location: Location?) {
         //place marker at current position
-        //mGoogleMap.clear();
+        mMap?.clear()
         if (currLocationMarker != null) {
             currLocationMarker!!.remove()
         }
@@ -212,10 +214,15 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         markerOptions.position(latLng!!)
         markerOptions.title("Current Position")
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-        currLocationMarker = mMap!!.addMarker(markerOptions)
+        currLocationMarker = mMap?.addMarker(markerOptions)
 
          //zoom to current position:
-         mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+
+        mTrackId?.let {
+            mDetailPackagePresenter.sendingCourierLocation(it)
+        }
+
 
         //If you only need one location, unregister the listener
         //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);

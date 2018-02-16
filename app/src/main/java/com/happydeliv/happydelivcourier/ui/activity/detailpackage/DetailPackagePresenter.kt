@@ -80,9 +80,7 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                             view?.hideLoading()
                             if(result.resultCode == 1){
                                 getPackageDetail(trackingID)
-
-                                val progressPackageVo = ProgressPackageVo(trackingID,mDriverLat,mDriverLong)
-                                firebaseDB.setInProgressPackageData(progressPackageVo)
+                                sendingCourierLocation(trackingID)
                                 view?.hideProcessPackageLayout()
                             }else{
                                 view?.showError(result.resultMessage)
@@ -126,6 +124,11 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                             view?.showError("please try again")
                         })
         )
+    }
+
+    fun sendingCourierLocation(trackingID :String){
+        val progressPackageVo = ProgressPackageVo(trackingID,mDriverLat,mDriverLong)
+        firebaseDB.setInProgressPackageData(progressPackageVo)
     }
 
 }
