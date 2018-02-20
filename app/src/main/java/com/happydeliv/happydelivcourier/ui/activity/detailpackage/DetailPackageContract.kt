@@ -21,10 +21,14 @@ class DetailPackageContract{
         fun navigateToDashboard()
         fun hideProcessPackageLayout()
         fun showProcessPackageLayout()
+        fun drawDirection(currentLat: Double?, currentLong: Double?, destinationLat: Double?, destinationLong: Double?)
+        fun addMarker(lati :Double, longi :Double, marker :Int, titleMarker : String)
     }
     interface UserActionListener {
         fun getPackageDetail(packageId : String)
         fun processPackage(trackingID: String)
         fun finishPackage(trackingID :String)
+        fun checkingPackageStatus(status :String)
+        fun getTrackingPackageFirebase(trackingID : String)
     }
 }

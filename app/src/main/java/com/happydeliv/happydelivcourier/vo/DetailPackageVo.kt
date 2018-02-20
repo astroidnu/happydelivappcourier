@@ -13,5 +13,6 @@ data class DetailPackageVo(
         @SerializedName("resi_number") val resiNumber :String,
         @SerializedName("recipient_phone") val recipientPhone :String,
         @SerializedName("recipient_address") val recipientAddress :String,
-        @SerializedName("recipient_photo") val recipientPhoto :String
+        @SerializedName("recipient_photo") val recipientPhoto :String,
+        @SerializedName("status") val status :String
 )

@@ -1,9 +1,7 @@
 package com.happydeliv.happydelivcourier.utils
 
 import android.content.Context
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.happydeliv.happydelivcourier.vo.ProgressPackageVo
 
 /**
@@ -11,7 +9,7 @@ import com.happydeliv.happydelivcourier.vo.ProgressPackageVo
  * Android Engineer
  * SCO Project
  */
-class FirebaseDB(context : Context){
+class FirebaseDB(context : Context): ValueEventListener{
     companion object {
         /**
          * List of Firebase DB Tables name
@@ -19,20 +17,56 @@ class FirebaseDB(context : Context){
         val TABLE_PACKAGE_IN_PROGRESS = "package_in_progress"
 
     }
-    internal var mFirebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+
+    private var mDatabaseReference  : DatabaseReference? = null
+    internal val mFirebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    lateinit var mCallBack : GetFireBaseCallBack
 
     /**
      * Sending data to firebase
      * */
 
     fun setInProgressPackageData(progressPackageVo: ProgressPackageVo){
-        val mDatabaseReference = mFirebaseDatabase
+        mDatabaseReference = mFirebaseDatabase
                 .getReference(TABLE_PACKAGE_IN_PROGRESS)
-        mDatabaseReference.keepSynced(true)
-        mDatabaseReference.child(progressPackageVo.trackId).setValue(progressPackageVo)
+        mDatabaseReference!!.run {
+            keepSynced(true)
+            child(progressPackageVo.trackId).setValue(progressPackageVo)
+        }
+    }
+
+    fun onDisconnect(){
+        mDatabaseReference?.onDisconnect()
     }
 
 
+    /**
+     * getting data to firebase
+     * */
+    fun gettingTrackingData(trackId :String, callback: GetFireBaseCallBack?) {
+        if (callback != null) {
+            val mDatabaseReference = mFirebaseDatabase
+                    .getReference(TABLE_PACKAGE_IN_PROGRESS)
+            val  mQuery = mDatabaseReference
+                    .orderByChild("trackId")
+                    .equalTo(trackId)
+            mCallBack = callback
+            mDatabaseReference.keepSynced(true)
+            mQuery?.addValueEventListener(this)
+        }
+    }
+
+    override fun onCancelled(databaseError: DatabaseError?) {
+        databaseError?.let {
+            mCallBack.onError(it)
+        }
+    }
+
+    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+        dataSnapshot?.let {
+            mCallBack.onSuccess(it)
+        }
+    }
 
     /**
      * Interface for callback data from search

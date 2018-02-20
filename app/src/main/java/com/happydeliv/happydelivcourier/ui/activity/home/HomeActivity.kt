@@ -2,6 +2,7 @@ package com.happydeliv.happydelivcourier.ui.activity.home
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.View
 import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.ui.common.navigationcontroller.FragmentNavigation
@@ -12,6 +13,9 @@ import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_toolbar.*
 import javax.inject.Inject
+import com.google.firebase.iid.FirebaseInstanceId
+
+
 
 /**
  * Created by ibnumuzzakkir on 06/02/18.
@@ -37,6 +41,9 @@ class HomeActivity : BaseActivity(), HasSupportFragmentInjector, HomeContract.Vi
     override fun onActivityReady(savedInstanceState: Bundle?) {
         setupBottomNavigation()
         setupUIListener()
+        //Getting firebaseinstanceid token
+        val token = FirebaseInstanceId.getInstance().token
+        Log.d(javaClass.name, token)
     }
 
     override fun getLayoutId(): Int {

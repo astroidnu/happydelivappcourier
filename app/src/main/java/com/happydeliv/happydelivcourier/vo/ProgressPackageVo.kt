@@ -11,5 +11,7 @@ import com.google.gson.annotations.SerializedName
 data class ProgressPackageVo(
         @SerializedName("track_id") val trackId : String,
         @SerializedName("driver_current_lat") val driverCurrentLat : String,
-        @SerializedName("driver_current_long") val driverCurrentLong : String
+        @SerializedName("driver_current_long") val driverCurrentLong : String,
+        @SerializedName("destination_current_lat") val destinationCurrentLat : String,
+        @SerializedName("destination_current_long") val destinationCurrentLong : String
 )

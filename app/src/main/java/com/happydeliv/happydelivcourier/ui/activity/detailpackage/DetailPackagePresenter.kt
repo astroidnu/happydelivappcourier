@@ -1,11 +1,15 @@
 package com.happydeliv.happydelivcourier.ui.activity.detailpackage
 
 import android.util.Log
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.gson.Gson
+import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.api.NetworkService
 import com.happydeliv.happydelivcourier.session.LoginSession
 import com.happydeliv.happydelivcourier.utils.FirebaseDB
 import com.happydeliv.happydelivcourier.utils.SchedulerProvider
+import com.happydeliv.happydelivcourier.vo.PackageStatus
 import com.happydeliv.happydelivcourier.vo.ProgressPackageVo
 import com.scoproject.newsapp.ui.common.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,8 +27,10 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                                                  val loginSession: LoginSession,
                                                  val gson: Gson,
                                                  val firebaseDB: FirebaseDB) : BasePresenter<DetailPackageContract.View>(disposable,scheduler),DetailPackageContract.UserActionListener{
-    lateinit var mDriverLat : String
-    lateinit var mDriverLong : String
+    var mDriverLat : String? = null
+    var mDriverLong : String? = null
+    var mDestinationLat : String? = null
+    var mDestinationLong : String? = null
 
     override fun getPackageDetail(trackId : String) {
         view?.showLoading()
@@ -46,6 +52,7 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                             view?.hideLoading()
                             val detailPackage = result.data
                             if(result.resultCode == 1){
+                                checkingPackageStatus(detailPackage.status)
                                 view?.setupContent(detailPackage.recipientAddress,detailPackage.trackId,
                                         detailPackage.recipientPhoto,detailPackage.recipientName,detailPackage.recipientPhone)
                             }else{
@@ -126,9 +133,46 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
         )
     }
 
+    fun draw(){
+        if(mDriverLat != null && mDriverLong != null && mDestinationLat != null && mDestinationLong!= null){
+            view?.addMarker(mDriverLat?.toDouble()!!,mDriverLong?.toDouble()!!, R.drawable.ic_marker_kurir, "Lokasi Anda")
+            view?.addMarker(mDestinationLat?.toDouble()!!,mDestinationLong?.toDouble()!!, R.drawable.ic_marker_kurir_tujuan, "Tujuan")
+            view?.drawDirection(mDriverLat?.toDouble(),mDriverLong?.toDouble(),mDestinationLat?.toDouble(),mDestinationLong?.toDouble())
+        }
+    }
+
     fun sendingCourierLocation(trackingID :String){
-        val progressPackageVo = ProgressPackageVo(trackingID,mDriverLat,mDriverLong)
-        firebaseDB.setInProgressPackageData(progressPackageVo)
+        if(mDriverLat != null && mDriverLong != null && mDestinationLat != null && mDestinationLong!= null){
+            val progressPackageVo = ProgressPackageVo(trackingID, mDriverLat!!, mDriverLong!!, mDestinationLat!!, mDestinationLong!!)
+            firebaseDB.setInProgressPackageData(progressPackageVo)
+        }
+    }
+
+    override fun checkingPackageStatus(status: String) {
+        if(status == PackageStatus.IN_PROGRESS){
+            view?.hideProcessPackageLayout()
+        }else if(status == PackageStatus.PENDING){
+            view?.showProcessPackageLayout()
+        }
+    }
+
+    override fun getTrackingPackageFirebase(trackingID: String) {
+        firebaseDB.gettingTrackingData(trackingID, object : FirebaseDB.GetFireBaseCallBack{
+            override fun onSuccess(dataSnapshot: DataSnapshot) {
+                dataSnapshot.children.forEach {
+                    mDestinationLat = it.child("destinationCurrentLat").value.toString()
+                    mDestinationLong = it.child("destinationCurrentLong").value.toString()
+                }
+
+                draw()
+
+            }
+
+            override fun onError(databaseError: DatabaseError) {
+                Log.e(javaClass.name, databaseError.message.toString())
+            }
+
+        })
     }
 
 }

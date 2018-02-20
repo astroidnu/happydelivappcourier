@@ -49,7 +49,7 @@ class InProgressFragment : BaseFragment(), InProgressContract.View{
     }
 
     override fun setupAdapter(data: List<PackageVo>) {
-        rv_in_progress_package.setUp(data,R.layout.item_package,{
+        rv_in_progress_package?.setUp(data,R.layout.item_package,{
             tv_package_recipient_name.text = it.recipientName
             tv_package_resi_no.text ="Resi no : " +  it.resiNumber
             tv_package_status.text = it.status
