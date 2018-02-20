@@ -43,6 +43,7 @@ class FirebaseDB(context : Context): ValueEventListener{
     /**
      * getting data to firebase
      * */
+
     fun gettingTrackingData(trackId :String, callback: GetFireBaseCallBack?) {
         if (callback != null) {
             val mDatabaseReference = mFirebaseDatabase
@@ -54,6 +55,20 @@ class FirebaseDB(context : Context): ValueEventListener{
             mDatabaseReference.keepSynced(true)
             mQuery?.addValueEventListener(this)
         }
+    }
+
+
+    /**
+     * Delete tracking data from firebase DB
+     * by tracking id
+     * */
+
+    fun removeTrackingData(trackId :String) {
+        val mDatabaseReference = mFirebaseDatabase
+                .getReference(TABLE_PACKAGE_IN_PROGRESS)
+        mDatabaseReference
+                .child("trackId")
+                .removeValue()
     }
 
     override fun onCancelled(databaseError: DatabaseError?) {

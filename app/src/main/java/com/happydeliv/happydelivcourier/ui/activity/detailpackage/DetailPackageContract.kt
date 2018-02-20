@@ -30,5 +30,6 @@ class DetailPackageContract{
         fun finishPackage(trackingID :String)
         fun checkingPackageStatus(status :String)
         fun getTrackingPackageFirebase(trackingID : String)
+        fun deleteTrackingId(trackingID: String)
     }
 }

@@ -120,6 +120,7 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                             result ->
                             view?.hideLoading()
                             if(result.resultCode == 1){
+                                deleteTrackingId(trackingID)
                                 view?.navigateToDashboard()
                             }else{
                                 view?.showError(result.resultMessage)
@@ -174,5 +175,10 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
 
         })
     }
+
+    override fun deleteTrackingId(trackingID: String) {
+        firebaseDB.removeTrackingData(trackingID)
+    }
+
 
 }
