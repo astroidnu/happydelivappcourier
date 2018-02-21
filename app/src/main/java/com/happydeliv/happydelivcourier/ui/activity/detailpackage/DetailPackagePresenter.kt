@@ -148,7 +148,9 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
     }
 
     fun sendingCourierLocation(trackingID :String){
-        if(mDriverLat != null && mDriverLong != null && mDestinationLat != null && mDestinationLong!= null){
+        if((mDriverLat != null && mDriverLong != null)
+                && (mDestinationLat != null && mDestinationLong!= null)
+                && (mDuration != null && mDistance != null)){
             val progressPackageVo = ProgressPackageVo(trackingID, mDriverLat!!, mDriverLong!!, mDestinationLat!!, mDestinationLong!!, mDuration!!,mDistance!!)
             firebaseDB.setInProgressPackageData(progressPackageVo)
         }

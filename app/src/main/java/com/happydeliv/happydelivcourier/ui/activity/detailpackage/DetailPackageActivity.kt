@@ -326,6 +326,9 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
                 val durationArr = legs[0]["duration"] as JsonObject
                 val duration = durationArr["text"]
 
+                mDetailPackagePresenter.mDuration = duration.toString()
+                mDetailPackagePresenter.mDistance = distance.toString()
+
                 setContentDurationAndDistance(duration.toString(), distance.toString())
             }
         }
