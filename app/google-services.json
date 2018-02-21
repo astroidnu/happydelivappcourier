@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "723005650800",
+    "firebase_url": "https://happy-delivery-app.firebaseio.com",
+    "project_id": "happy-delivery-app",
+    "storage_bucket": "happy-delivery-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723005650800:android:808f7f3704a9b0fe",
+        "android_client_info": {
+          "package_name": "com.happydeliv.happydelivapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "723005650800-j5v4ljgkevcn1d2grbgfrp3assmm7rr6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.happydeliv.happydelivapp",
+            "certificate_hash": "2be3636ae7947f4e013367b0ca0551012e84c30b"
+          }
+        },
+        {
+          "client_id": "723005650800-ii36evmdk28ie1svh2bnv98h7mbvvod9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoWCBj7HmzY4kKoV6hawI9GC_AidQ11uE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "723005650800-ii36evmdk28ie1svh2bnv98h7mbvvod9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723005650800:android:eb5b9db9d6ce026e",
+        "android_client_info": {
+          "package_name": "com.happydeliv.happydelivcourier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "723005650800-jpmv9ol047l5c26r8otqu9ds0nlsmm8v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.happydeliv.happydelivcourier",
+            "certificate_hash": "2be3636ae7947f4e013367b0ca0551012e84c30b"
+          }
+        },
+        {
+          "client_id": "723005650800-ii36evmdk28ie1svh2bnv98h7mbvvod9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoWCBj7HmzY4kKoV6hawI9GC_AidQ11uE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "723005650800-ii36evmdk28ie1svh2bnv98h7mbvvod9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
