@@ -67,7 +67,7 @@ class FirebaseDB(context : Context): ValueEventListener{
         val mDatabaseReference = mFirebaseDatabase
                 .getReference(TABLE_PACKAGE_IN_PROGRESS)
         mDatabaseReference
-                .child("trackId")
+                .child(trackId)
                 .removeValue()
     }
 

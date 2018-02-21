@@ -16,6 +16,7 @@ class DetailPackageContract{
                          recipientName: String,
                          phoneDriver: String)
         fun showLoading()
+        fun setContentDurationAndDistance(duration:String, distance:String)
         fun hideLoading()
         fun showError(content :String)
         fun navigateToDashboard()

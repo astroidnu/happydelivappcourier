@@ -31,6 +31,8 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
     var mDriverLong : String? = null
     var mDestinationLat : String? = null
     var mDestinationLong : String? = null
+    var mDuration : String? = null
+    var mDistance : String? = null
 
     override fun getPackageDetail(trackId : String) {
         view?.showLoading()
@@ -135,16 +137,19 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
     }
 
     fun draw(){
-        if(mDriverLat != null && mDriverLong != null && mDestinationLat != null && mDestinationLong!= null){
+        if((mDriverLat != null && mDriverLong != null)
+                && (mDestinationLat != null && mDestinationLong != null)
+                && (!mDestinationLat.equals("null") && !mDestinationLong.equals("null"))){
             view?.addMarker(mDriverLat?.toDouble()!!,mDriverLong?.toDouble()!!, R.drawable.ic_marker_kurir, "Lokasi Anda")
             view?.addMarker(mDestinationLat?.toDouble()!!,mDestinationLong?.toDouble()!!, R.drawable.ic_marker_kurir_tujuan, "Tujuan")
             view?.drawDirection(mDriverLat?.toDouble(),mDriverLong?.toDouble(),mDestinationLat?.toDouble(),mDestinationLong?.toDouble())
+            view?.setContentDurationAndDistance(mDuration.toString(), mDistance.toString())
         }
     }
 
     fun sendingCourierLocation(trackingID :String){
         if(mDriverLat != null && mDriverLong != null && mDestinationLat != null && mDestinationLong!= null){
-            val progressPackageVo = ProgressPackageVo(trackingID, mDriverLat!!, mDriverLong!!, mDestinationLat!!, mDestinationLong!!)
+            val progressPackageVo = ProgressPackageVo(trackingID, mDriverLat!!, mDriverLong!!, mDestinationLat!!, mDestinationLong!!, mDuration!!,mDistance!!)
             firebaseDB.setInProgressPackageData(progressPackageVo)
         }
     }
@@ -160,12 +165,15 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
     override fun getTrackingPackageFirebase(trackingID: String) {
         firebaseDB.gettingTrackingData(trackingID, object : FirebaseDB.GetFireBaseCallBack{
             override fun onSuccess(dataSnapshot: DataSnapshot) {
-                dataSnapshot.children.forEach {
-                    mDestinationLat = it.child("destinationCurrentLat").value.toString()
-                    mDestinationLong = it.child("destinationCurrentLong").value.toString()
+                if(dataSnapshot != null){
+                    dataSnapshot.children.forEach {
+                        mDestinationLat = it.child("destinationCurrentLat").value.toString()
+                        mDestinationLong = it.child("destinationCurrentLong").value.toString()
+                        mDuration = it.child("duration").value.toString()
+                        mDistance = it.child("distance").value.toString()
+                    }
+                    draw()
                 }
-
-                draw()
 
             }
 

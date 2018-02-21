@@ -49,10 +49,10 @@ import javax.inject.Inject
  * Android Engineer
  * SCO Project
  */
-@Suppress("DEPRECATION")
 open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener {
+
     @Inject
     lateinit var mDetailPackagePresenter : DetailPackagePresenter
 
@@ -256,16 +256,16 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         ll_in_progress_package_driver.visibility = View.VISIBLE
         ll_start_package_driver.visibility = View.GONE
         sv_search_alamat.visibility = View.GONE
-        tv_distance?.visibility = View.GONE
-        tv_duration?.visibility = View.GONE
+        tv_distance?.visibility = View.VISIBLE
+        tv_duration?.visibility = View.VISIBLE
     }
 
     override fun showProcessPackageLayout() {
         ll_in_progress_package_driver.visibility = View.GONE
         ll_start_package_driver.visibility = View.VISIBLE
         sv_search_alamat.visibility = View.VISIBLE
-        tv_distance?.visibility = View.VISIBLE
-        tv_duration?.visibility = View.VISIBLE
+        tv_distance?.visibility = View.GONE
+        tv_duration?.visibility = View.GONE
     }
 
     @SuppressLint("MissingPermission")
@@ -326,14 +326,18 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
                 val durationArr = legs[0]["duration"] as JsonObject
                 val duration = durationArr["text"]
 
-                tv_distance?.text = "Jarak : " + distance
-                tv_duration?.text = "Waktu tempuh : " + duration
+                setContentDurationAndDistance(duration.toString(), distance.toString())
             }
         }
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
 //        Toast.makeText(this,"onConnectionFailed",Toast.LENGTH_SHORT).show();
+    }
+
+    override fun setContentDurationAndDistance(duration: String, distance: String) {
+        tv_distance?.text = "Jarak : " + distance
+        tv_duration?.text = "Waktu tempuh : " + duration
     }
 
     @SuppressLint("MissingPermission")
@@ -389,44 +393,24 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         mDetailPackagePresenter.mDriverLat = location.latitude.toString()
         mDetailPackagePresenter.mDriverLong = location.longitude.toString()
 
-        if(mCurrentLat != null && mCurrentLong !=  null){
-            if(mCurrentLat != location.latitude.toString() && mCurrentLong != location.longitude.toString() ){
-                var markerOptions = MarkerOptions()
-                markerOptions.position(latLng!!)
-                markerOptions.title("Current Position")
-                //Setup Marker Driver
-                val bitmap = BitmapFactory.decodeResource(this.resources, R.drawable.ic_marker_kurir)
-                val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
-                markerOptions.icon(markerDriver)
-                currLocationMarker = mMap?.addMarker(markerOptions)
+        var markerOptions = MarkerOptions()
+        markerOptions.position(latLng!!)
+        markerOptions.title("Current Position")
+        //Setup Marker Driver
+        val bitmap = BitmapFactory.decodeResource(this.resources, R.drawable.ic_marker_kurir)
+        val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
+        markerOptions.icon(markerDriver)
+        currLocationMarker = mMap?.addMarker(markerOptions)
 
-                //zoom to current position:
-                mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+        //zoom to current position:
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
 
-                mTrackId?.let {
-                    mDetailPackagePresenter.sendingCourierLocation(it)
-                }
-                mDetailPackagePresenter.draw()
-
-                mCurrentLong = location.longitude.toString()
-                mCurrentLat = location.latitude.toString()
-            }
-        }else{
-            mCurrentLong = location.longitude.toString()
-            mCurrentLat = location.latitude.toString()
-
-            var markerOptions = MarkerOptions()
-            markerOptions.position(latLng!!)
-            markerOptions.title("Current Position")
-            //Setup Marker Driver
-            val bitmap = BitmapFactory.decodeResource(this.resources, R.drawable.ic_marker_kurir)
-            val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
-            markerOptions.icon(markerDriver)
-            currLocationMarker = mMap?.addMarker(markerOptions)
-
-            //zoom to current position:
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+        mTrackId?.let {
+            mDetailPackagePresenter.sendingCourierLocation(it)
         }
+
+        mDetailPackagePresenter.draw()
+
 
         //If you only need one location, unregister the listener
         //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
