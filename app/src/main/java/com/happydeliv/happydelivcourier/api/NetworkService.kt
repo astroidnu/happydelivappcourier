@@ -1,6 +1,7 @@
 package com.happydeliv.happydelivcourier.api
 
 import com.happydeliv.happydelivcourier.api.response.BaseApiResponse
+import com.happydeliv.happydelivcourier.vo.BestRouteVo
 import com.happydeliv.happydelivcourier.vo.DetailPackageVo
 import com.happydeliv.happydelivcourier.vo.PackageVo
 import com.happydeliv.happydelivcourier.vo.VerifyOtpVo
@@ -17,7 +18,6 @@ interface NetworkService{
     @FormUrlEncoded
     @POST("/api-courrier/login")
     fun login(@Field("data") param : String) : Flowable<BaseApiResponse<VerifyOtpVo>>
-
 
     @FormUrlEncoded
     @POST("/api-courrier/add_package")
@@ -43,7 +43,7 @@ interface NetworkService{
     @POST("/api-courrier/finish_package")
     fun finishPackage(@Field("data") data : String, @Field("user_info") userinfo: String) : Flowable<BaseApiResponse<Any>>
 
-
-
-
+    @FormUrlEncoded
+    @POST("/api-courrier/best_route")
+    fun getBestRoute(@Field("data") data : String, @Field("user_info") userinfo: String) : Flowable<BaseApiResponse<BestRouteVo>>
 }

@@ -9,6 +9,13 @@ import com.scoproject.weatherapp.ui.base.BaseView
  */
 class BestRouteContract{
     interface View : BaseView{
-
+        fun showLoading()
+        fun hideLoading()
+        fun showError(msg :String)
+        fun addMarker(lati :Double, longi :Double, marker :Int, titleMarker : String)
+        fun drawDirection(currentLat: Double?, currentLong: Double?, destinationLat: Double?, destinationLong: Double?, color :Int)
+    }
+    interface UserActionListener {
+        fun getBestRouteData(currLat : String, currLong : String)
     }
 }

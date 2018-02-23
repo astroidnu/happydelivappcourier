@@ -8,6 +8,7 @@ import com.happydeliv.happydelivcourier.di.scope.ActivityScope
 import com.happydeliv.happydelivcourier.session.LoginSession
 import com.happydeliv.happydelivcourier.ui.common.navigationcontroller.ActivityNavigation
 import com.happydeliv.happydelivcourier.ui.common.navigationcontroller.FragmentNavigation
+import com.happydeliv.happydelivcourier.ui.fragment.home.bestroute.BestRoutePresenter
 import com.happydeliv.happydelivcourier.ui.fragment.home.history.HistoryPresenter
 import com.happydeliv.happydelivcourier.ui.fragment.home.myaccount.MyAccountPresenter
 import com.happydeliv.happydelivcourier.utils.AppSchedulerProvider
@@ -30,15 +31,11 @@ class HomeModule{
 
     @Provides
     @ActivityScope
-    internal fun provideActivityNavigation(homeActivity: HomeActivity): ActivityNavigation{
-        return ActivityNavigation(homeActivity)
-    }
+    internal fun provideActivityNavigation(homeActivity: HomeActivity) =  ActivityNavigation(homeActivity)
 
 
     @Provides @ActivityScope
-    internal fun provideFragmentNavigation(homeActivity: HomeActivity): FragmentNavigation {
-        return FragmentNavigation(homeActivity, R.id.frame_home)
-    }
+    internal fun provideFragmentNavigation(homeActivity: HomeActivity) = FragmentNavigation(homeActivity, R.id.frame_home)
 
 
     /**
@@ -47,23 +44,26 @@ class HomeModule{
 
     @Provides @ActivityScope
     internal  fun provideInProgressPresenter(networkService: NetworkService, compositeDisposable: CompositeDisposable,
-                                             schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson) : InProgressPresenter {
-        return InProgressPresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
+                                             schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson)
+            = InProgressPresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
 
-    }
 
     @Provides @ActivityScope
     internal  fun provideHistoryPresenter(networkService: NetworkService, compositeDisposable: CompositeDisposable,
-                                             schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson) : HistoryPresenter {
-        return HistoryPresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
-    }
+                                             schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson)
+            = HistoryPresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
+
 
 
     @Provides @ActivityScope
     internal  fun provideMyAccountPresenter(networkService: NetworkService, compositeDisposable: CompositeDisposable,
-                                          schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson) : MyAccountPresenter {
-        return MyAccountPresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
-    }
+                                          schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson)
+            =  MyAccountPresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
 
+
+    @Provides @ActivityScope
+    internal  fun provideBestRoutePresenter(networkService: NetworkService, compositeDisposable: CompositeDisposable,
+                                            schedulerProvider: AppSchedulerProvider, loginSession: LoginSession, gson: Gson)
+            =  BestRoutePresenter(networkService,compositeDisposable, schedulerProvider, gson,loginSession)
 
 }
