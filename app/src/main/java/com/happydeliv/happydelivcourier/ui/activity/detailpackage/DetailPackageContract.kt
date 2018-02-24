@@ -32,5 +32,6 @@ class DetailPackageContract{
         fun checkingPackageStatus(status :String)
         fun getTrackingPackageFirebase(trackingID : String)
         fun deleteTrackingId(trackingID: String)
+        fun setDestinationPackage(trackId :String, destinationLat: String, destinationLong: String)
     }
 }

@@ -143,7 +143,9 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
             view?.addMarker(mDriverLat?.toDouble()!!,mDriverLong?.toDouble()!!, R.drawable.ic_marker_kurir, "Lokasi Anda")
             view?.addMarker(mDestinationLat?.toDouble()!!,mDestinationLong?.toDouble()!!, R.drawable.ic_marker_kurir_tujuan, "Tujuan")
             view?.drawDirection(mDriverLat?.toDouble(),mDriverLong?.toDouble(),mDestinationLat?.toDouble(),mDestinationLong?.toDouble())
-            view?.setContentDurationAndDistance(mDuration.toString(), mDistance.toString())
+            if(mDuration != null && mDistance != null){
+                view?.setContentDurationAndDistance(mDuration.toString(), mDistance.toString())
+            }
         }
     }
 
@@ -152,6 +154,13 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
                 && (mDestinationLat != null && mDestinationLong!= null)
                 && (mDuration != null && mDistance != null)){
             val progressPackageVo = ProgressPackageVo(trackingID, mDriverLat!!, mDriverLong!!, mDestinationLat!!, mDestinationLong!!, mDuration!!,mDistance!!)
+            firebaseDB.setInProgressPackageData(progressPackageVo)
+        }
+    }
+
+    fun sendingLocation(trackingID: String, mDestinationLat :String, mDestinationLong :String){
+        if((mDriverLat != null && mDriverLong != null)){
+            val progressPackageVo = ProgressPackageVo(trackingID, mDriverLat!!, mDriverLong!!, mDestinationLat, mDestinationLong, "","")
             firebaseDB.setInProgressPackageData(progressPackageVo)
         }
     }
@@ -190,5 +199,29 @@ class DetailPackagePresenter @Inject constructor(private val networkService: Net
         firebaseDB.removeTrackingData(trackingID)
     }
 
+    override fun setDestinationPackage(trackId: String, destinationLat: String, destinationLong: String) {
+        view?.showLoading()
+        var userInfo = HashMap<String, Any>()
+        userInfo.put("phone", loginSession.getPhoneNumber())
+        userInfo.put("token", loginSession.getLoginToken())
+
+        var data = HashMap<String, String>()
+        data.put("track_id", trackId)
+        data.put("destination_lat", destinationLat)
+        data.put("destination_longi", destinationLong)
+
+        networkService.setDestinationPackage(gson.toJson(data), gson.toJson(userInfo))
+                .subscribeOn(scheduler.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    result ->
+                    view?.hideLoading()
+                    view?.showError(result.resultMessage)
+                },{
+                    err -> Log.e(javaClass.name, err.message.toString())
+                    view?.hideLoading()
+                    view?.showError("please try again")
+                })
+    }
 
 }

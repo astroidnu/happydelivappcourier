@@ -15,6 +15,7 @@ data class BestRouteVo(
         @SerializedName("recipient_address") val recipientAddress  : String,
         @SerializedName("lat_address") val latAddress  : String,
         @SerializedName("longi_address") val longinAddress  : String,
+        @SerializedName("previous_lat") val previousLati  : String,
+        @SerializedName("previous_longi") val previousLongi  : String,
         @SerializedName("sequence") val sequence  : String
-
-        )
+)

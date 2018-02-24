@@ -45,5 +45,10 @@ interface NetworkService{
 
     @FormUrlEncoded
     @POST("/api-courrier/best_route")
-    fun getBestRoute(@Field("data") data : String, @Field("user_info") userinfo: String) : Flowable<BaseApiResponse<BestRouteVo>>
+    fun getBestRoute(@Field("data") data : String, @Field("user_info") userinfo: String) : Flowable<BaseApiResponse<List<BestRouteVo>>>
+
+    @FormUrlEncoded
+    @POST("/api-courrier/set_destination_package")
+    fun setDestinationPackage(@Field("data") data : String, @Field("user_info") userinfo: String) : Flowable<BaseApiResponse<Any>>
+
 }

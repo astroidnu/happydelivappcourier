@@ -3,10 +3,12 @@ package com.happydeliv.happydelivcourier.ui.activity.detailpackage
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -49,10 +51,9 @@ import javax.inject.Inject
  * Android Engineer
  * SCO Project
  */
-open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapReadyCallback,
+class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener {
-
+        GoogleApiClient.OnConnectionFailedListener,LocationListener, android.location.LocationListener {
     @Inject
     lateinit var mDetailPackagePresenter : DetailPackagePresenter
 
@@ -71,8 +72,11 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
     var mTrackId :String? = null
 
     var mGeoDataClient : GeoDataClient? = null
-    var mCurrentLat  : String? = null
-    var mCurrentLong : String? = null
+
+    private val mLocationManager by lazy {
+        getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    }
+
 
 
     override fun onActivityReady(savedInstanceState: Bundle?) {
@@ -101,7 +105,6 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
                         //Denied by user
                     }
                 }, { throwable -> throwable.message}, { })
-        mDetailPackagePresenter.getTrackingPackageFirebase(mTrackId!!)
     }
 
     override fun onResume() {
@@ -189,7 +192,15 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
             mDetailPackagePresenter.mDestinationLat = place.latLng.latitude.toString()
             mDetailPackagePresenter.mDestinationLong = place.latLng.longitude.toString()
 
+            //Update Destination Package
+            mDetailPackagePresenter.setDestinationPackage(mTrackId!!, place.latLng.latitude.toString(),place.latLng.longitude.toString())
+
             mDetailPackagePresenter.draw()
+
+            mTrackId?.let {
+                mDetailPackagePresenter.sendingLocation(it,place.latLng.latitude.toString(),place.latLng.longitude.toString())
+            }
+
 
 
         }else{
@@ -296,40 +307,46 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
             val result = URL(url).readText()
             uiThread {
                 // When API call is done, create parser and convert into JsonObjec
-                val parser = Parser()
-                val stringBuilder = StringBuilder(result)
-                val json: JsonObject = parser.parse(stringBuilder) as JsonObject
-                // get to the correct element in JsonObject
-                val routes = json.array<JsonObject>("routes")
-                val points = routes!!["legs"]["steps"][0] as JsonArray<JsonObject>
-                // For every element in the JsonArray, decode the polyline string and pass all points to a List
-                val polypts = points.flatMap { decodePoly(it.obj("polyline")?.string("points")!!)  }
-                // Add  points to polyline and bounds
-                options.add(driver)
-                LatLongB.include(driver)
-                for (point in polypts)  {
-                    options.add(point)
-                    LatLongB.include(point)
+                try{
+                    val parser = Parser()
+                    val stringBuilder = StringBuilder(result)
+                    val json: JsonObject = parser.parse(stringBuilder) as JsonObject
+                    // get to the correct element in JsonObject
+                    val routes = json.array<JsonObject>("routes")
+                    if(routes?.size!! > 0){
+                        val points = routes["legs"]["steps"][0] as JsonArray<JsonObject>
+                        // For every element in the JsonArray, decode the polyline string and pass all points to a List
+                        val polypts = points.flatMap { decodePoly(it.obj("polyline")?.string("points")!!)  }
+                        // Add  points to polyline and bounds
+                        options.add(driver)
+                        LatLongB.include(driver)
+                        for (point in polypts)  {
+                            options.add(point)
+                            LatLongB.include(point)
+                        }
+                        options.add(destination)
+                        LatLongB.include(destination)
+                        // build bounds
+                        val bounds = LatLongB.build()
+                        // add polyline to the map
+                        mMap?.addPolyline(options)
+                        // show map with route centered
+                        mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+
+                        val legs  = routes!!["legs"][0] as JsonArray<JsonObject>
+                        val distanceArr = legs[0]["distance"] as JsonObject
+                        val distance = distanceArr["text"]
+                        val durationArr = legs[0]["duration"] as JsonObject
+                        val duration = durationArr["text"]
+
+                        mDetailPackagePresenter.mDuration = duration.toString()
+                        mDetailPackagePresenter.mDistance = distance.toString()
+
+                        setContentDurationAndDistance(duration.toString(), distance.toString())
+                    }
+                }catch (e :Exception){
+                    e.printStackTrace()
                 }
-                options.add(destination)
-                LatLongB.include(destination)
-                // build bounds
-                val bounds = LatLongB.build()
-                // add polyline to the map
-                mMap?.addPolyline(options)
-                // show map with route centered
-                mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-
-                val legs  = routes!!["legs"][0] as JsonArray<JsonObject>
-                val distanceArr = legs[0]["distance"] as JsonObject
-                val distance = distanceArr["text"]
-                val durationArr = legs[0]["duration"] as JsonObject
-                val duration = durationArr["text"]
-
-                mDetailPackagePresenter.mDuration = duration.toString()
-                mDetailPackagePresenter.mDistance = distance.toString()
-
-                setContentDurationAndDistance(duration.toString(), distance.toString())
             }
         }
     }
@@ -366,6 +383,28 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
 
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
 
+        }else{
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0.1f, this)
+
+            Log.d("GPS Enabled", "GPS Enabled")
+            val location = mLocationManager
+                    .getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (location != null) {
+                latLng = LatLng(location.latitude, location.longitude)
+                var markerOptions = MarkerOptions()
+                markerOptions.position(latLng!!)
+                markerOptions.title("Current Position")
+                //Setup Marker Driver
+                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_marker_kurir)
+                val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
+                markerOptions.icon(markerDriver)
+                currLocationMarker = mMap?.addMarker(markerOptions)
+                //zoom to current position:
+                mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+            }
         }
 
         mLocationRequest = LocationRequest()
@@ -376,6 +415,8 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         mGoogleApiClient?.let {
             LocationServices.FusedLocationApi.requestLocationUpdates(it, mLocationRequest, this)
         }
+
+        mDetailPackagePresenter.getTrackingPackageFirebase(mTrackId!!)
 
     }
 
@@ -473,6 +514,18 @@ open class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, O
         }
 
         return poly
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+
+    }
+
+    override fun onProviderEnabled(provider: String?) {
+
+    }
+
+    override fun onProviderDisabled(provider: String?) {
+
     }
 
 }
