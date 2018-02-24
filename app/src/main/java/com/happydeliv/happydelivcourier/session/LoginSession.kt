@@ -17,6 +17,7 @@ class LoginSession {
     private val PREF_NAME = "name"
     private val PREF_PHONE = "phone"
     private val PREF_TOKEN_ID = "token_id"
+    private val PREF_COMPANY_NAME = "company_name"
 
     var pref = Pref()
 
@@ -67,6 +68,14 @@ class LoginSession {
 
     fun saveName(name: String) {
         pref._setString(PREF_NAME, name)
+    }
+
+    fun getCompanyName(): String {
+        return pref._getString(PREF_COMPANY_NAME, "")!!
+    }
+
+    fun saveCompanyName(companyName: String) {
+        pref._setString(PREF_COMPANY_NAME, companyName)
     }
 
     fun getPhoneNumber(): String {

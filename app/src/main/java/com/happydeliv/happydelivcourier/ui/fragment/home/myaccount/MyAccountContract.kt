@@ -9,12 +9,16 @@ import com.scoproject.weatherapp.ui.base.BaseView
  */
 class MyAccountContract{
     interface View : BaseView {
-        fun setupContent(email :String, phoneNo :String)
+        fun setupContent(email :String, phoneNo :String, companyName :String)
         fun navigateToLoginPage()
         fun setupUIListener()
+        fun showLoading()
+        fun hideLoading()
+        fun showError(msg :String)
     }
 
     interface UserActionListener {
         fun logout()
+        fun gettingUserInformation()
     }
 }

@@ -1,10 +1,7 @@
 package com.happydeliv.happydelivcourier.api
 
 import com.happydeliv.happydelivcourier.api.response.BaseApiResponse
-import com.happydeliv.happydelivcourier.vo.BestRouteVo
-import com.happydeliv.happydelivcourier.vo.DetailPackageVo
-import com.happydeliv.happydelivcourier.vo.PackageVo
-import com.happydeliv.happydelivcourier.vo.VerifyOtpVo
+import com.happydeliv.happydelivcourier.vo.*
 import io.reactivex.Flowable
 import retrofit2.http.*
 
@@ -46,6 +43,11 @@ interface NetworkService{
     @FormUrlEncoded
     @POST("/api-courrier/best_route")
     fun getBestRoute(@Field("data") data : String, @Field("user_info") userinfo: String) : Flowable<BaseApiResponse<List<BestRouteVo>>>
+
+    @FormUrlEncoded
+    @POST("/api-courrier/user_information")
+    fun getCourierInformation(@Field("user_info") userinfo: String) : Flowable<BaseApiResponse<CourierInfoVo>>
+
 
     @FormUrlEncoded
     @POST("/api-courrier/set_destination_package")

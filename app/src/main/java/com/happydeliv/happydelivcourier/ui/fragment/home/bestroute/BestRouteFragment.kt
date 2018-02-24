@@ -278,24 +278,26 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
                 val json: JsonObject = parser.parse(stringBuilder) as JsonObject
                 // get to the correct element in JsonObject
                 val routes = json.array<JsonObject>("routes")
-                val points = routes!!["legs"]["steps"][0] as JsonArray<JsonObject>
-                // For every element in the JsonArray, decode the polyline string and pass all points to a List
-                val polypts = points.flatMap { decodePoly(it.obj("polyline")?.string("points")!!)  }
-                // Add  points to polyline and bounds
-                options.add(driver)
-                LatLongB.include(driver)
-                for (point in polypts)  {
-                    options.add(point)
-                    LatLongB.include(point)
+                if(routes?.size!! > 0){
+                    val points = routes["legs"]["steps"][0] as JsonArray<JsonObject>
+                    // For every element in the JsonArray, decode the polyline string and pass all points to a List
+                    val polypts = points.flatMap { decodePoly(it.obj("polyline")?.string("points")!!)  }
+                    // Add  points to polyline and bounds
+                    options.add(driver)
+                    LatLongB.include(driver)
+                    for (point in polypts)  {
+                        options.add(point)
+                        LatLongB.include(point)
+                    }
+                    options.add(destination)
+                    LatLongB.include(destination)
+                    // build bounds
+                    val bounds = LatLongB.build()
+                    // add polyline to the map
+                    mMap?.addPolyline(options)
+                    // show map with route centered
+                    mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
                 }
-                options.add(destination)
-                LatLongB.include(destination)
-                // build bounds
-                val bounds = LatLongB.build()
-                // add polyline to the map
-                mMap?.addPolyline(options)
-                // show map with route centered
-                mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
             }
         }
     }

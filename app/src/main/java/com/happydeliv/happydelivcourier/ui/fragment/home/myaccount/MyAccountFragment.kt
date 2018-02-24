@@ -1,6 +1,8 @@
 package com.happydeliv.happydelivcourier.ui.fragment.home.myaccount
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import com.happydeliv.happydelivapp.ui.common.BaseFragment
 import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.session.LoginSession
@@ -37,7 +39,7 @@ class MyAccountFragment : BaseFragment(), MyAccountContract.View{
         (activity as HomeActivity).hideBtnAddPackage()
         mMyAccountPresenter.attachView(this)
         setupUIListener()
-        setupContent(mLoginSession.getEmail(), mLoginSession.getPhoneNumber())
+        mMyAccountPresenter.gettingUserInformation()
     }
 
     override fun setupUIListener() {
@@ -46,10 +48,10 @@ class MyAccountFragment : BaseFragment(), MyAccountContract.View{
         }
     }
 
-    override fun setupContent(email: String, phoneNo: String) {
+    override fun setupContent(email: String, phoneNo: String, companyName: String) {
         mProfileEmail.text = email
         mProfilePhone.text = phoneNo
-        tv_profile_name.text = mLoginSession.getName()
+        tv_company_name.text = companyName
     }
 
     override fun navigateToLoginPage() {
@@ -60,5 +62,19 @@ class MyAccountFragment : BaseFragment(), MyAccountContract.View{
         mMyAccountPresenter.detachView()
         super.onStop()
     }
+
+    override fun showLoading() {
+        pb_my_account_loading.visibility = View.VISIBLE
+    }
+
+    override fun hideLoading() {
+        pb_my_account_loading.visibility = View.GONE
+    }
+
+    override fun showError(msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+    }
+
+
 
 }
