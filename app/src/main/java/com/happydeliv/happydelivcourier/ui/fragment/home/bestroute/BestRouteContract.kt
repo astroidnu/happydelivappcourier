@@ -12,7 +12,7 @@ class BestRouteContract{
         fun showLoading()
         fun hideLoading()
         fun showError(msg :String)
-        fun addMarker(lati :Double, longi :Double, marker :Int, titleMarker : String)
+        fun addMarker(lati :Double, longi :Double, marker : Int,titleMarker : String, sequence : String, isInitializeState : Boolean)
         fun drawDirection(currentLat: Double?, currentLong: Double?, destinationLat: Double?, destinationLong: Double?, color :Int)
     }
     interface UserActionListener {

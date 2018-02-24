@@ -4,12 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View.inflate
+import android.widget.TextView
 import android.widget.Toast
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
@@ -28,8 +32,10 @@ import com.google.android.gms.maps.model.*
 import com.happydeliv.happydelivapp.ui.common.BaseFragment
 import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.ui.activity.home.HomeActivity
+import com.happydeliv.happydelivcourier.utils.ImageUtil
 import com.tedpark.tedpermission.rx2.TedRx2Permission
 import kotlinx.android.synthetic.main.fragment_best_route.*
+import kotlinx.android.synthetic.main.item_marker_best_route.*
 import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.uiThread
 import java.net.URL
@@ -53,6 +59,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
     var mapFrag: SupportMapFragment? = null
     var latLng : LatLng? = null
     var currLocationMarker : Marker? = null
+    private var mBitmapMarker : Bitmap? = null
 
     private val mLocationManager by lazy {
         this.context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -154,17 +161,12 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
             LocationServices.FusedLocationApi.requestLocationUpdates(it, mLocationRequest, this)
         }
 
-        //Direction 1
-
-        addMarker(-6.135200,106.813301, R.drawable.ic_marker_kurir, "Lokasi Anda")
-        addMarker(-6.343782,106.737461, R.drawable.ic_marker_kurir_tujuan, "Tujuan")
-
+        //Add Marker
+        addMarker(-6.135200,106.813301, R.drawable.ic_marker_kurir, "Lokasi Anda","", true)
+        addMarker(-6.343782,106.737461, R.drawable.ic_marker_kurir_tujuan, "Tujuan","1", false)
+        addMarker(-6.312822,106.746341, R.drawable.ic_marker_kurir_tujuan, "Tujuan","2", false)
+        //Direction 1 & 2
         drawDirection(-6.135200,106.813301,-6.343782,106.737461, Color.BLUE)
-
-        //Direction 2
-        addMarker(-6.343782,106.737461, R.drawable.ic_marker_kurir, "Lokasi Anda")
-        addMarker(-6.312822,106.746341, R.drawable.ic_marker_kurir_tujuan, "Tujuan")
-
         drawDirection(-6.343782,106.737461,-6.312822,106.746341, Color.GRAY)
 
     }
@@ -229,16 +231,29 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
 
     }
 
-    override fun addMarker(lati :Double, longi :Double, marker : Int,titleMarker : String){
+    override fun addMarker(lati :Double, longi :Double, marker : Int,titleMarker : String, sequence : String, isInitializeState : Boolean){
         latLng = LatLng(lati, longi)
         val markerOptions = MarkerOptions()
         markerOptions.position(latLng!!)
         markerOptions.title(titleMarker)
-        //Setup Marker Driver
-        val bitmap = BitmapFactory.decodeResource(this.resources,marker)
-        val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
-        markerOptions.icon(markerDriver)
+        //New marker best route concept
 
+        if(isInitializeState){
+            //Create Marker for first state
+            mBitmapMarker = BitmapFactory.decodeResource(this.resources,marker)
+
+        }else{
+            //Create best route marker
+            val view = (activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                    .inflate(R.layout.item_marker_best_route, null)
+            val tvBestRouteSequnce = view.findViewById<TextView>(R.id.tv_marker_best_route_sequence)
+            tvBestRouteSequnce.text = sequence
+            view.isDrawingCacheEnabled = true
+            view.buildDrawingCache()
+            mBitmapMarker= ImageUtil.createDrawableFromView(context,view)
+        }
+
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mBitmapMarker))
         mMap!!.addMarker(markerOptions)
     }
 
