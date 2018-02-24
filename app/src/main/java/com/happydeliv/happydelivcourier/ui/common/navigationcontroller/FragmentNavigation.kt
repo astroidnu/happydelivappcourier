@@ -24,7 +24,7 @@ class FragmentNavigation @Inject constructor(val activity: AppCompatActivity, va
     fun navigateToInProgressPage() {
         val mInProgressFragment = InProgressFragment()
 
-        loadFragment(mInProgressFragment)
+        loadFragment(mInProgressFragment, "inprogress")
     }
 
 
@@ -34,7 +34,7 @@ class FragmentNavigation @Inject constructor(val activity: AppCompatActivity, va
 
     fun navigateToHistoryPage() {
         val mHistoryFragment = HistoryFragment()
-        loadFragment(mHistoryFragment)
+        loadFragment(mHistoryFragment,"history")
     }
 
 
@@ -45,7 +45,7 @@ class FragmentNavigation @Inject constructor(val activity: AppCompatActivity, va
 
     fun navigateToBestRoutePage() {
         val mBestRouteFragment = BestRouteFragment()
-        loadFragment(mBestRouteFragment)
+        loadFragment(mBestRouteFragment,"bestroute")
     }
 
 
@@ -55,16 +55,17 @@ class FragmentNavigation @Inject constructor(val activity: AppCompatActivity, va
 
     fun navigateToMyAccountPage() {
         val mMyAccountFragment = MyAccountFragment()
-        loadFragment(mMyAccountFragment)
+        loadFragment(mMyAccountFragment, "myaccount")
     }
 
     /**
      * Load Fragment
      * Handling all load fragment navigation
      * */
-    private fun loadFragment(fragment: Fragment?) {
+    private fun loadFragment(fragment: Fragment?, tag :String) {
         mFragmentManager.beginTransaction()
-                .replace(containerId, fragment)
+                .replace(containerId, fragment,tag)
+                .addToBackStack(null)
                 .commitAllowingStateLoss()
     }
 

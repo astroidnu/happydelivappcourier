@@ -1,7 +1,9 @@
 package com.happydeliv.happydelivcourier.ui.fragment.home.bestroute
 
+import android.graphics.Color
 import android.util.Log
 import com.google.gson.Gson
+import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.api.NetworkService
 import com.happydeliv.happydelivcourier.session.LoginSession
 import com.happydeliv.happydelivcourier.utils.SchedulerProvider
@@ -40,7 +42,21 @@ class BestRoutePresenter @Inject constructor(private val networkService: Network
                         .subscribe({
                             result ->
                             view?.hideLoading()
-                            Log.d(javaClass.name, gson.toJson(result))
+                            if(result.resultCode == 1){
+                                for(res in result.data){
+                                    Log.d(javaClass.name,gson.toJson(res))
+                                    view?.addMarker(
+                                            res.latAddress.toDouble(), res.longinAddress.toDouble(),
+                                            R.drawable.ic_marker_kurir_tujuan,
+                                            res.recipientAddress,res.sequence,
+                                            false)
+                                    view?.drawDirection(
+                                            res.previousLati.toDouble(),
+                                            res.previousLongi.toDouble(),
+                                            res.latAddress.toDouble(),
+                                            res.longinAddress.toDouble(), Color.GRAY)
+                                }
+                            }
 //                            if(result.resultCode == 1){
 //                                deleteTrackingId(trackingID)
 //                                view?.navigateToDashboard()

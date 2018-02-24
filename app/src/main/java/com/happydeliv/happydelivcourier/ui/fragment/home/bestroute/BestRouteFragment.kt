@@ -2,6 +2,7 @@ package com.happydeliv.happydelivcourier.ui.fragment.home.bestroute
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Bitmap
@@ -10,6 +11,7 @@ import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.inflate
@@ -71,6 +73,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
 
     override fun onLoadFragment(saveInstance: Bundle?) {
         (activity as HomeActivity).hideBtnAddPackage()
+        mBestRoutePresenter.attachView(this)
         TedRx2Permission.with(context)
                 .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE)
                 .request()
@@ -84,7 +87,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
                     }
                 }, { throwable -> throwable.message}, { })
 
-        mBestRoutePresenter.getBestRouteData("6.121212","101.23242")
     }
 
     private fun setupGoogleClient(){
@@ -108,7 +110,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         mMap = googleMap
         mMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
         setupGoogleClient()
-        //TODO Remove this line after proof of concept
     }
 
     @SuppressLint("MissingPermission")
@@ -127,6 +128,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
             markerOptions.icon(markerDriver)
 
             currLocationMarker = mMap!!.addMarker(markerOptions)
+            mBestRoutePresenter.getBestRouteData(mLastLocation.latitude.toString(),mLastLocation.longitude.toString())
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
         }else{
             mLocationManager.requestLocationUpdates(
@@ -143,12 +145,11 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
                 markerOptions.position(latLng!!)
                 markerOptions.title("Current Position")
                 //Setup Marker Driver
-                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_marker_kurir)
-                val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
-                markerOptions.icon(markerDriver)
-                currLocationMarker = mMap?.addMarker(markerOptions)
+                addMarker(location.latitude,location.longitude,R.drawable.ic_marker_kurir,"","",true)
+                mBestRoutePresenter.getBestRouteData(location.latitude.toString(),location.longitude.toString())
                 //zoom to current position:
                 mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+
             }
         }
 
@@ -160,15 +161,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         mGoogleApiClient?.let {
             LocationServices.FusedLocationApi.requestLocationUpdates(it, mLocationRequest, this)
         }
-
-        //Add Marker
-        addMarker(-6.135200,106.813301, R.drawable.ic_marker_kurir, "Lokasi Anda","", true)
-        addMarker(-6.343782,106.737461, R.drawable.ic_marker_kurir_tujuan, "Tujuan","1", false)
-        addMarker(-6.312822,106.746341, R.drawable.ic_marker_kurir_tujuan, "Tujuan","2", false)
-        //Direction 1 & 2
-        drawDirection(-6.135200,106.813301,-6.343782,106.737461, Color.BLUE)
-        drawDirection(-6.343782,106.737461,-6.312822,106.746341, Color.GRAY)
-
     }
 
     override fun onConnectionSuspended(p0: Int) {
@@ -184,10 +176,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         super.onPause()
     }
 
-    override fun onResume() {
-        mGoogleApiClient?.connect()
-        super.onResume()
-    }
 
     override fun onLocationChanged(location: Location?) {
         location?.let {
@@ -216,7 +204,9 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
     }
 
     override fun showError(msg: String) {
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+        context?.let {
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -240,17 +230,22 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
 
         if(isInitializeState){
             //Create Marker for first state
-            mBitmapMarker = BitmapFactory.decodeResource(this.resources,marker)
+            mBitmapMarker = BitmapFactory.decodeResource(resources,marker)
 
         }else{
             //Create best route marker
-            val view = (activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-                    .inflate(R.layout.item_marker_best_route, null)
-            val tvBestRouteSequnce = view.findViewById<TextView>(R.id.tv_marker_best_route_sequence)
-            tvBestRouteSequnce.text = sequence
-            view.isDrawingCacheEnabled = true
-            view.buildDrawingCache()
-            mBitmapMarker= ImageUtil.createDrawableFromView(context,view)
+            if(activity != null){
+
+                mBitmapMarker = BitmapFactory.decodeResource(this.resources,marker)
+                val view = (activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                        .inflate(R.layout.item_marker_best_route, null)
+                val tvBestRouteSequnce = view.findViewById<TextView>(R.id.tv_marker_best_route_sequence)
+                tvBestRouteSequnce.text = sequence
+                view.isDrawingCacheEnabled = true
+                view.buildDrawingCache()
+                mBitmapMarker= ImageUtil.createDrawableFromView(context,view)
+            }
+
         }
 
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mBitmapMarker))
@@ -268,7 +263,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         // Declare polyline object and set up color and width
         val options = PolylineOptions()
         options.color(color)
-        options.width(5f)
+        options.width(10f)
 
         // build URL to call API
         val url = getURL(driver, destination)
@@ -301,17 +296,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
                 mMap?.addPolyline(options)
                 // show map with route centered
                 mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-
-                val legs  = routes!!["legs"][0] as JsonArray<JsonObject>
-                val distanceArr = legs[0]["distance"] as JsonObject
-                val distance = distanceArr["text"]
-                val durationArr = legs[0]["duration"] as JsonObject
-                val duration = durationArr["text"]
-
-//                mDetailPackagePresenter.mDuration = duration.toString()
-//                mDetailPackagePresenter.mDistance = distance.toString()
-//
-//                setContentDurationAndDistance(duration.toString(), distance.toString())
             }
         }
     }
@@ -367,4 +351,8 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
     }
 
 
+    override fun onDestroy() {
+        mGoogleApiClient?.disconnect()
+        super.onDestroy()
+    }
 }
