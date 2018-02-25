@@ -83,6 +83,7 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
     override fun onActivityReady(savedInstanceState: Bundle?) {
         mDetailPackagePresenter.attachView(this)
         setupUIListener()
+
         val bundle = intent.extras
         if (bundle != null) {
             mTrackId = bundle.getString("data")
@@ -149,7 +150,7 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
             mDetailPackagePresenter.finishPackage(mTrackId!!)
         }
 
-        sv_search_alamat.setOnClickListener {
+        rl_search_gps.setOnClickListener {
               try {
                 val intentBuilder = PlacePicker.IntentBuilder()
                 val intent = intentBuilder.build(this)
@@ -268,7 +269,7 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
     override fun hideProcessPackageLayout() {
         ll_in_progress_package_driver.visibility = View.VISIBLE
         ll_start_package_driver.visibility = View.GONE
-        sv_search_alamat.visibility = View.GONE
+        rl_search_gps.visibility = View.GONE
         tv_distance?.visibility = View.VISIBLE
         tv_duration?.visibility = View.VISIBLE
     }
@@ -276,7 +277,7 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
     override fun showProcessPackageLayout() {
         ll_in_progress_package_driver.visibility = View.GONE
         ll_start_package_driver.visibility = View.VISIBLE
-        sv_search_alamat.visibility = View.VISIBLE
+        rl_search_gps.visibility = View.VISIBLE
         tv_distance?.visibility = View.GONE
         tv_duration?.visibility = View.GONE
     }
