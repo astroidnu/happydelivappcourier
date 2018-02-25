@@ -428,8 +428,6 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
             currLocationMarker!!.remove()
         }
 
-        toast(location?.latitude.toString() + "," + location?.longitude.toString())
-
         latLng = LatLng(location!!.latitude, location.longitude)
         mDetailPackagePresenter.mDriverLat = location.latitude.toString()
         mDetailPackagePresenter.mDriverLong = location.longitude.toString()

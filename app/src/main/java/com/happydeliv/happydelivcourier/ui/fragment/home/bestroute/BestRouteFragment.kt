@@ -102,7 +102,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
             if (mGoogleApiClient != null) {
                 mGoogleApiClient?.connect()
             } else {
-//            Toast.makeText(this, "Not Connected!", Toast.LENGTH_SHORT).show()
             }
         }
     }
