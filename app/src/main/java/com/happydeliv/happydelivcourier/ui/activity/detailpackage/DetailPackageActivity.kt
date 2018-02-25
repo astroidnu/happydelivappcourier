@@ -124,8 +124,6 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
 
         if (mGoogleApiClient != null) {
             mGoogleApiClient?.connect()
-        } else {
-//            Toast.makeText(this, "Not Connected!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -352,7 +350,6 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
-//        Toast.makeText(this,"onConnectionFailed",Toast.LENGTH_SHORT).show();
     }
 
     override fun setContentDurationAndDistance(duration: String, distance: String) {

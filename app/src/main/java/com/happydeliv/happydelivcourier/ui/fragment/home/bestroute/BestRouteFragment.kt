@@ -35,7 +35,9 @@ import com.happydeliv.happydelivapp.ui.common.BaseFragment
 import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.ui.activity.home.HomeActivity
 import com.happydeliv.happydelivcourier.utils.ImageUtil
+import com.happydeliv.happydelivcourier.vo.BestRouteVo
 import com.tedpark.tedpermission.rx2.TedRx2Permission
+import kotlinx.android.synthetic.main.activity_detail_package.*
 import kotlinx.android.synthetic.main.fragment_best_route.*
 import kotlinx.android.synthetic.main.item_marker_best_route.*
 import org.jetbrains.anko.custom.async
@@ -61,7 +63,6 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
     var mapFrag: SupportMapFragment? = null
     var latLng : LatLng? = null
     var currLocationMarker : Marker? = null
-    private var mBitmapMarker : Bitmap? = null
 
     private val mLocationManager by lazy {
         this.context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -81,6 +82,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
                     if (tedPermissionResult.isGranted) {
                         //Permission Granted
                         mapFrag = childFragmentManager.findFragmentById(R.id.mapBestRoute) as SupportMapFragment
+                        mapFrag!!.retainInstance = true
                         mapFrag!!.getMapAsync(this)
                     } else {
                         //Denied by user
@@ -89,7 +91,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
 
     }
 
-    private fun setupGoogleClient(){
+    private  @Synchronized fun setupGoogleClient(){
         context?.let {
             mGoogleApiClient = GoogleApiClient.Builder(it)
                     .addConnectionCallbacks(this)
@@ -110,41 +112,29 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         mMap = googleMap
         mMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
         setupGoogleClient()
+
     }
 
     @SuppressLint("MissingPermission")
     override fun onConnected(p0: Bundle?) {
         val mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient)
+        mMap?.clear()
         if (mLastLocation != null) {
-//            place marker at current position
-            mMap?.clear()
             latLng = LatLng(mLastLocation.latitude, mLastLocation.longitude)
-            val markerOptions = MarkerOptions()
-            markerOptions.position(latLng!!)
-            markerOptions.title("Current Position")
-            //Setup Marker Driver
-            val bitmap = BitmapFactory.decodeResource(this.resources, R.drawable.ic_marker_kurir)
-            val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
-            markerOptions.icon(markerDriver)
-
-            currLocationMarker = mMap!!.addMarker(markerOptions)
-            mBestRoutePresenter.getBestRouteData(mLastLocation.latitude.toString(),mLastLocation.longitude.toString())
+//            place marker at current position
+            addMarker(mLastLocation.latitude,mLastLocation.longitude,R.drawable.ic_marker_kurir,"","",true)
+            mBestRoutePresenter.getBestRouteData(latLng?.latitude.toString(),latLng?.longitude.toString())
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
         }else{
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     0,
                     0.1f, this)
-
             Log.d("GPS Enabled", "GPS Enabled");
             val location = mLocationManager
                     .getLastKnownLocation(LocationManager.GPS_PROVIDER)
             if (location != null) {
                 latLng = LatLng(location.latitude, location.longitude)
-                var markerOptions = MarkerOptions()
-                markerOptions.position(latLng!!)
-                markerOptions.title("Current Position")
-                //Setup Marker Driver
                 addMarker(location.latitude,location.longitude,R.drawable.ic_marker_kurir,"","",true)
                 mBestRoutePresenter.getBestRouteData(location.latitude.toString(),location.longitude.toString())
                 //zoom to current position:
@@ -154,8 +144,8 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         }
 
         mLocationRequest = LocationRequest()
-        mLocationRequest?.interval = 60000 //5 seconds
-        mLocationRequest?.fastestInterval = 30000 //3 seconds
+        mLocationRequest?.interval = 100000 //5 seconds
+        mLocationRequest?.fastestInterval = 40000 //3 seconds
         mLocationRequest?.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 //        mLocationRequest?.smallestDisplacement = 0.1F //1/10 meter
         mGoogleApiClient?.let {
@@ -187,8 +177,10 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
             val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_marker_kurir)
             val markerDriver = BitmapDescriptorFactory.fromBitmap(bitmap)
             markerOptions.icon(markerDriver)
-            currLocationMarker = mMap?.addMarker(markerOptions)
+            mMap?.addMarker(markerOptions)
 
+            mBestRoutePresenter.getBestRouteData(it.latitude.toString(),it.longitude.toString())
+//
             //zoom to current position:
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
 
@@ -222,34 +214,37 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
     }
 
     override fun addMarker(lati :Double, longi :Double, marker : Int,titleMarker : String, sequence : String, isInitializeState : Boolean){
-        latLng = LatLng(lati, longi)
-        val markerOptions = MarkerOptions()
-        markerOptions.position(latLng!!)
-        markerOptions.title(titleMarker)
-        //New marker best route concept
+        async {
+            uiThread {
+                latLng = LatLng(lati, longi)
+                val markerOptions = MarkerOptions()
+                markerOptions.position(latLng!!)
+                markerOptions.title(titleMarker)
+                //New marker best route concept
+                var mBitmapMarker : Bitmap? = BitmapFactory.decodeResource(resources,marker)
 
-        if(isInitializeState){
-            //Create Marker for first state
-            mBitmapMarker = BitmapFactory.decodeResource(resources,marker)
+                if(isInitializeState){
+                    //Create Marker for first state
+                    mBitmapMarker = BitmapFactory.decodeResource(resources,marker)
 
-        }else{
-            //Create best route marker
-            if(activity != null){
+                }else{
+                    //Create best route marker
+                    if(activity != null){
+                        val view = (activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                                .inflate(R.layout.item_marker_best_route, null)
+                        val tvBestRouteSequnce = view.findViewById<TextView>(R.id.tv_marker_best_route_sequence)
+                        tvBestRouteSequnce.text = sequence
+                        view.isDrawingCacheEnabled = true
+                        view.buildDrawingCache()
+                        mBitmapMarker= ImageUtil.createDrawableFromView(context,view)
+                    }
 
-                mBitmapMarker = BitmapFactory.decodeResource(this.resources,marker)
-                val view = (activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-                        .inflate(R.layout.item_marker_best_route, null)
-                val tvBestRouteSequnce = view.findViewById<TextView>(R.id.tv_marker_best_route_sequence)
-                tvBestRouteSequnce.text = sequence
-                view.isDrawingCacheEnabled = true
-                view.buildDrawingCache()
-                mBitmapMarker= ImageUtil.createDrawableFromView(context,view)
+                }
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mBitmapMarker))
+                mMap?.addMarker(markerOptions)
+
             }
-
         }
-
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mBitmapMarker))
-        mMap!!.addMarker(markerOptions)
     }
 
     override fun drawDirection(currentLat: Double?, currentLong: Double?, destinationLat: Double?, destinationLong: Double?, color :Int){
@@ -294,6 +289,7 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
                     // build bounds
                     val bounds = LatLongB.build()
                     // add polyline to the map
+                    Log.d(javaClass.name + "Map Status", mMap.toString())
                     mMap?.addPolyline(options)
                     // show map with route centered
                     mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
@@ -352,9 +348,26 @@ class BestRouteFragment : BaseFragment(), BestRouteContract.View, OnMapReadyCall
         return poly
     }
 
-
     override fun onDestroy() {
+        mMap?.clear()
+        mGoogleApiClient?.unregisterConnectionCallbacks(this)
         mGoogleApiClient?.disconnect()
         super.onDestroy()
+
     }
+
+    override fun tampungNilai(data: List<BestRouteVo>) {
+        for(res in data){
+            addMarker(res.latAddress.toDouble(), res.longinAddress.toDouble(),
+                    R.drawable.ic_marker_kurir_tujuan,
+                    res.trackId,res.sequence,
+                    false)
+            drawDirection(
+                    res.previousLati.toDouble(),
+                    res.previousLongi.toDouble(),
+                    res.latAddress.toDouble(),
+                    res.longinAddress.toDouble(), Color.GRAY)
+        }
+    }
+
 }

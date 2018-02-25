@@ -9,6 +9,8 @@ import com.happydeliv.happydelivcourier.ui.activity.home.HomeActivity
 import com.happydeliv.happydelivcourier.ui.activity.home.HomeModule
 import com.happydeliv.happydelivcourier.ui.activity.login.LoginActivity
 import com.happydeliv.happydelivcourier.ui.activity.login.LoginModule
+import com.happydeliv.happydelivcourier.ui.activity.scanbarcode.ScanBarcodeActivity
+import com.happydeliv.happydelivcourier.ui.activity.scanbarcode.ScanBarcodeModule
 import com.happydeliv.happydelivcourier.ui.activity.splashscreen.SplashActivity
 import com.happydeliv.happydelivcourier.ui.activity.splashscreen.SplashModule
 import dagger.Module
@@ -41,6 +43,11 @@ abstract class CommonActivityBuilder{
     @ActivityScope
     @ContributesAndroidInjector(modules = [(AddTrackingModule::class)])
     internal abstract fun bindAddTrackingActivity(): AddTrackingActivity
+
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [(ScanBarcodeModule::class)])
+    internal abstract fun bindScanBarcodeModule(): ScanBarcodeActivity
 
 
 }

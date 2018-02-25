@@ -37,7 +37,7 @@ class MyAccountPresenter  @Inject constructor(private val networkService: Networ
                             view?.hideLoading()
                             if(result.resultCode == 1){
                                 val data = result.data
-                                view?.setupContent(data.email, data.phone,data.company)
+                                view?.setupContent(data.name, data.email, data.phone,data.company)
                             }else{
                                 view?.showError(result.resultMessage)
                             }

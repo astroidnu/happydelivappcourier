@@ -3,4 +3,5 @@
     <string name="package_no_data">Ooops, kamu tidak memiliki daftar kiriman untuk diantarkan saat ini</string>
     <string name="api_key">AIzaSyApv_RaL_j3NnycJzEhQIgQ3XdhQ1awKhU</string>
     <string name="google_place_api_key">AIzaSyC_BJqIOKN5BIx-I9SMlSyVXkQhVB455BU</string>
+    <string name="empty_string">-</string>
 </resources>

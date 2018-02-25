@@ -137,6 +137,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <Button
+                        android:layout_margin="4dp"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/colorPrimary"
                         android:id="@+id/btn_process_package"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -149,18 +152,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <Button
+                        android:layout_margin="4dp"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/colorPrimary"
                         android:id="@+id/btn_phone_customer"
                         android:layout_weight="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TELEPON"/>
                     <Button
+                        android:layout_margin="4dp"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/colorPrimary"
                         android:id="@+id/btn_message_customer"
                         android:layout_weight="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pesan"/>
                     <Button
+                        android:layout_margin="4dp"
+                        android:textColor="@color/colorWhite"
+                        android:background="@color/colorPrimary"
                         android:id="@+id/btn_finish_package"
                         android:layout_weight="1"
                         android:layout_width="wrap_content"

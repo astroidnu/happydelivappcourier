@@ -1,10 +1,12 @@
 package com.happydeliv.happydelivcourier.ui.activity.addtracking
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.happydeliv.happydelivcourier.R
 import com.scoproject.newsapp.ui.common.BaseActivity
+import com.tedpark.tedpermission.rx2.TedRx2Permission
 import kotlinx.android.synthetic.main.activity_add_tracking.*
 import javax.inject.Inject
 
@@ -19,6 +21,16 @@ class AddTrackingActivity : BaseActivity(), AddTrackingContract.View{
 
     override fun onActivityReady(savedInstanceState: Bundle?) {
         mAddTrackingPresenter.attachView(this)
+        TedRx2Permission.with(this)
+                .setPermissions(Manifest.permission.CAMERA)
+                .request()
+                .subscribe({ tedPermissionResult ->
+                    if (tedPermissionResult.isGranted) {
+                       //Permission Granted
+                    } else {
+                        //Denied by user
+                    }
+                }, { throwable -> throwable.message}, { })
         setupUIListener()
     }
 
@@ -39,6 +51,14 @@ class AddTrackingActivity : BaseActivity(), AddTrackingContract.View{
             val mTrackingId = et_add_tracking_id.text.toString()
             mAddTrackingPresenter.addTrackingPackage(mTrackingId)
         }
+
+        imgbtn_back.setOnClickListener {
+            this.finish()
+        }
+
+        scanBarcode.setOnClickListener{
+            mActivityNavigation.navigateToQRScan()
+        }
     }
 
     override fun onBackPressed() {
@@ -52,5 +72,4 @@ class AddTrackingActivity : BaseActivity(), AddTrackingContract.View{
     override fun showError(content: String) {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show()
     }
-
 }

@@ -48,7 +48,8 @@ class MyAccountFragment : BaseFragment(), MyAccountContract.View{
         }
     }
 
-    override fun setupContent(email: String, phoneNo: String, companyName: String) {
+    override fun setupContent(name : String, email: String, phoneNo: String, companyName: String) {
+        tv_profile_name.text  = name
         mProfileEmail.text = email
         mProfilePhone.text = phoneNo
         tv_company_name.text = companyName

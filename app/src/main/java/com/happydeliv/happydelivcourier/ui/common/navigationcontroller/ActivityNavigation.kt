@@ -8,6 +8,7 @@ import com.happydeliv.happydelivcourier.ui.activity.addtracking.AddTrackingActiv
 import com.happydeliv.happydelivcourier.ui.activity.detailpackage.DetailPackageActivity
 import com.happydeliv.happydelivcourier.ui.activity.home.HomeActivity
 import com.happydeliv.happydelivcourier.ui.activity.login.LoginActivity
+import com.happydeliv.happydelivcourier.ui.activity.scanbarcode.ScanBarcodeActivity
 import javax.inject.Inject
 
 /**
@@ -47,6 +48,16 @@ class ActivityNavigation @Inject constructor(val activity:AppCompatActivity){
         val intentHomePage = newIntent(activity, HomeActivity::class.java)
         activity.startActivity(intentHomePage)
     }
+
+    /**
+     * Navigate To Home Page
+     * */
+
+    fun navigateToQRScan(){
+        val scanbarcode = newIntent(activity, ScanBarcodeActivity::class.java)
+        activity.startActivity(scanbarcode)
+    }
+
 
     /**
      * Navigate To Add Tracking Page

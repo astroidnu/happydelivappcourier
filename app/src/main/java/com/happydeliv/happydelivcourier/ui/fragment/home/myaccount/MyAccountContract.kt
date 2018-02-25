@@ -9,7 +9,7 @@ import com.scoproject.weatherapp.ui.base.BaseView
  */
 class MyAccountContract{
     interface View : BaseView {
-        fun setupContent(email :String, phoneNo :String, companyName :String)
+        fun setupContent(name : String, email :String, phoneNo :String, companyName :String)
         fun navigateToLoginPage()
         fun setupUIListener()
         fun showLoading()
