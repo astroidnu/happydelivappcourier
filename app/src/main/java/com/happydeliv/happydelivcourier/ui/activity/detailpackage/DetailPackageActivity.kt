@@ -405,10 +405,10 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
         }
 
         mLocationRequest = LocationRequest()
-        mLocationRequest?.interval = 60000 //5 seconds
-        mLocationRequest?.fastestInterval = 10000 //3 seconds
+        mLocationRequest?.interval = 4000 //5 seconds
+        mLocationRequest?.fastestInterval = 3000 //3 seconds
         mLocationRequest?.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        mLocationRequest?.smallestDisplacement = 10F //1/10 meter
+        mLocationRequest?.smallestDisplacement = 1F //1/10 meter
         mGoogleApiClient?.let {
             LocationServices.FusedLocationApi.requestLocationUpdates(it, mLocationRequest, this)
         }
