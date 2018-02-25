@@ -134,6 +134,7 @@ dependencies {
 
     implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3'
     implementation 'me.dm7.barcodescanner:zbar:1.9.8'
+    implementation 'com.ncorti:slidetoact:0.2.0'
 
 
 }

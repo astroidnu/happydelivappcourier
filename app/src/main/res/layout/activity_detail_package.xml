@@ -64,7 +64,7 @@
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="JNE Indonesia"/>
+                        android:text="-"/>
                     <TextView
                         android:id="@+id/tv_detail_track_id"
                         android:layout_centerVertical="true"
@@ -74,7 +74,7 @@
                         android:fontFamily="sans-serif"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Track ID : 999-99-999-99"/>
+                        android:text="-"/>
                 </RelativeLayout>
                 <View
                     android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                             android:fontFamily="sans-serif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="alamat"/>
+                            android:text="-"/>
                         <TextView
                             android:id="@+id/tv_duration"
                             android:layout_marginTop="4dp"
@@ -121,7 +121,7 @@
                             android:fontFamily="sans-serif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="10 Mins to arrive"/>
+                            android:text="-"/>
                         <TextView
                             android:id="@+id/tv_distance"
                             android:layout_marginTop="4dp"
@@ -129,21 +129,32 @@
                             android:fontFamily="sans-serif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="10 Km"/>
+                            android:text="-"/>
                     </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/ll_start_package_driver"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <Button
-                        android:layout_margin="4dp"
-                        android:textColor="@color/colorWhite"
-                        android:background="@color/colorPrimary"
-                        android:id="@+id/btn_process_package"
+                    <com.ncorti.slidetoact.SlideToActView
+                        android:id="@+id/slide_process_package"
+                        android:layout_margin="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Mulai mengantar"/>
+                        app:outer_color="@color/colorPrimary"
+                        app:border_radius="27dp"
+                        app:text="Geser untuk mulai mengantar"
+                        app:text_size="12sp"
+                        app:slider_height="50dp"
+                        app:slider_locked="false" />
+                    <!--<Button-->
+                        <!--android:layout_margin="4dp"-->
+                        <!--android:textColor="@color/colorWhite"-->
+                        <!--android:background="@color/colorPrimary"-->
+                        <!--android:id="@+id/btn_process_package"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="Mulai mengantar"/>-->
                 </LinearLayout>
                 <LinearLayout
                     android:visibility="gone"

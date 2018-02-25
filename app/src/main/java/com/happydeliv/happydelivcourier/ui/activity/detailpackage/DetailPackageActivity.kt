@@ -35,6 +35,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.happydeliv.happydelivcourier.R
 import com.happydeliv.happydelivcourier.utils.FirebaseDB
+import com.ncorti.slidetoact.SlideToActView
 import com.scoproject.newsapp.ui.common.BaseActivity
 import com.tedpark.tedpermission.rx2.TedRx2Permission
 import kotlinx.android.synthetic.main.activity_detail_package.*
@@ -53,7 +54,7 @@ import javax.inject.Inject
  */
 class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener, android.location.LocationListener {
+        GoogleApiClient.OnConnectionFailedListener,LocationListener, android.location.LocationListener, SlideToActView.OnSlideCompleteListener {
     @Inject
     lateinit var mDetailPackagePresenter : DetailPackagePresenter
 
@@ -142,9 +143,7 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
             onBackPressed()
         }
 
-        btn_process_package.setOnClickListener {
-            mDetailPackagePresenter.processPackage(mTrackId!!)
-        }
+        slide_process_package.onSlideCompleteListener = this
 
         btn_finish_package.setOnClickListener {
             mDetailPackagePresenter.finishPackage(mTrackId!!)
@@ -165,6 +164,11 @@ class DetailPackageActivity : BaseActivity(), DetailPackageContract.View, OnMapR
             }
         }
     }
+
+    override fun onSlideComplete(view: SlideToActView) {
+        mDetailPackagePresenter.processPackage(mTrackId!!)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == REQUEST_PLACE_PICKER && resultCode == Activity.RESULT_OK){
